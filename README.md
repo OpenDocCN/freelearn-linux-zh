@@ -5,9 +5,6 @@
 > 这世界上有一种鸟是没有脚的，它只能够一直的飞呀飞呀，飞累了就在风里面睡觉，这种鸟一辈子只能下地一次，那一次就是它死亡的时候。——《阿飞正传》
 
 * [在线阅读](https://linux.apachecn.org)
-* [在线阅读（Gitee）](https://apachecn.gitee.io/apachecn-linux-zh/)
-* [ApacheCN 学习资源](http://docs.apachecn.org/)
-
 ## 目录
 
 +   [笨办法学 Linux 中文版](docs/llthw-zh/SUMMARY.md)
@@ -42,22 +39,6 @@
 +   [将 Linux 迁移到微软 Azure](docs/migrate-linux-ms-azure/SUMMARY.md)
 +   [使用 Linux 工作](docs/work-with-linux/SUMMARY.md)
 
-## 贡献指南
-
-为了不断改进翻译质量，我们特此启动了【翻译、校对、笔记整理活动】，开设了多个校对项目。贡献者校对一章之后可以领取千字2\~4元的奖励。进行中的校对活动请见[活动列表](https://home.apachecn.org/#/docs/activity/docs-activity)。更多详情请联系飞龙（Q562826179，V:wizardforcel）。
-
-## 联系方式
-
-### 负责人
-
-* [飞龙](https://github.com/wizardforcel): 562826179
-
-### 其他
-
-*   在我们的 [apachecn/apachecn-linux-zh](https://github.com/apachecn/apachecn-linux-zh) github 上提 issue.
-*   发邮件到 Email: `apachecn@163.com`.
-*   在我们的 [组织学习交流群](http://www.apachecn.org/organization/348.html) 中联系群主/管理员即可.
-
 ## 下载
 
 ### Docker
@@ -65,14 +46,6 @@
 ```
 docker pull apachecn0/apachecn-linux-zh
 docker run -tid -p <port>:80 apachecn0/apachecn-linux-zh
-# 访问 http://localhost:{port} 查看文档
-```
-
-### PYPI
-
-```
-pip install apachecn-linux-zh
-apachecn-linux-zh <port>
 # 访问 http://localhost:{port} 查看文档
 ```
 
