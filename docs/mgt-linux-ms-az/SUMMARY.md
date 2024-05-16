@@ -1,0 +1,7 @@
++   [前言](mgt-linux-ms-az_0.md)
++   [第一章：1. Linux：云中的历史和未来](mgt-linux-ms-az_1.md)
++   [第二章：2. 理解 Linux 发行版](mgt-linux-ms-az_2.md)
++   [第三章：3. 评估和迁移规划](mgt-linux-ms-az_3.md)
++   [第四章：4. 迁移到 Azure](mgt-linux-ms-az_4.md)
++   [第五章：5\. 在 Azure 上操作 Linux](mgt-linux-ms-az_5.md)
++   [第六章：6.故障排除和问题解决](mgt-linux-ms-az_6.md)
