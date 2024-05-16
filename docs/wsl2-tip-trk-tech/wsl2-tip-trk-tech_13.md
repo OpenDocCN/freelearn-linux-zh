@@ -1,4 +1,4 @@
-# 第十章：*第十章*：Visual Studio Code 和容器
+# 第十章：Visual Studio Code 和容器
 
 在*第九章*，*Visual Studio Code 和 WSL*中，我们看到 Visual Studio Code 编辑器允许将用户界面与与我们的代码交互和运行代码的其他功能分离。通过 WSL，这使我们可以在运行我们项目的所有关键部分的 Linux 中保持熟悉的基于 Windows 的用户界面。除了允许代码交互在 WSL 中的服务器组件中运行外，Visual Studio Code 还允许我们通过 SSH 连接到代码服务器或在容器中运行它。能够在容器中运行是由**Remote-Containers**扩展提供的，本章将重点介绍如何使用此功能。我们将看到如何使用这些开发容器（或**dev container**）来封装我们的项目依赖项。通过这样做，我们可以更容易地将人们引入我们的项目，并获得一种优雅的方式来隔离可能发生冲突的工具集。
 

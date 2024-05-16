@@ -1,4 +1,4 @@
-# 第九章：*第九章*：Visual Studio Code 和 WSL
+# 第九章：Visual Studio Code 和 WSL
 
 到目前为止，本书的重点一直是 WSL 和直接使用 WSL 进行工作。在本章中，我们将提升一个层次，开始探讨在开发应用程序时如何在 WSL 之上工作。特别是在本章中，我们将探索微软提供的免费编辑器 Visual Studio Code。
 

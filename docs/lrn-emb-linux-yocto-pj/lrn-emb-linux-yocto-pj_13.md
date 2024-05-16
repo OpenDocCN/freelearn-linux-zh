@@ -1,4 +1,4 @@
-# 第十三章。CGL 和 LSB
+# 第十三章：CGL 和 LSB
 
 在本章中，您将了解本书最后一个主题的信息，即**Carrier Grade Linux**（**CGL**）和**Linux Standard Base**（**LSB**）倡议，当然还有与 Yocto 项目集成和支持相关的内容。这里也会提到这些标准及其规范的一些信息，以及 Yocto 为它们提供的支持水平。我还将介绍一些与 CGL 相关的倡议，如**Automotive Grade Linux**和**Carrier Grade Virtualization**。它们也构成了一系列可行的解决方案，适用于各种应用。
 

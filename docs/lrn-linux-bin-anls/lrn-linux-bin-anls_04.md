@@ -1,4 +1,4 @@
-# 第四章 ELF 病毒技术- Linux/Unix 病毒
+# 第四章：ELF 病毒技术- Linux/Unix 病毒
 
 病毒编写的艺术已经存在了几十年。事实上，它可以追溯到 1981 年通过软盘视频游戏成功在野外发布的 Elk Cloner 苹果病毒。自 80 年代中期到 90 年代，有各种秘密团体和黑客利用他们的神秘知识设计、发布和发表病毒在病毒和黑客电子杂志中（见[`vxheaven.org/lib/static/vdat/ezines1.htm`](http://vxheaven.org/lib/static/vdat/ezines1.htm)）。
 

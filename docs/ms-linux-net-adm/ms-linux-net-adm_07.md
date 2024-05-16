@@ -1,4 +1,4 @@
-# 第七章。通过 Apache 托管 HTTP 内容
+# 第七章：通过 Apache 托管 HTTP 内容
 
 **Apache**是互联网上最常用的 Web 服务器。虽然还有其他可用的 Web 服务器，比如微软的**Internet Information Services**（**IIS**），但在提供 Web 内容方面，Apache 占据着统治地位。Apache 在 Linux 和 UNIX 平台上都可用，使您能够托管内容并在本地局域网以及互联网上共享。Apache 服务器有许多用途，包括（但不限于）托管博客或公司网站，或为您的公司设置员工门户网站。
 

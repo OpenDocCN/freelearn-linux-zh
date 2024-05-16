@@ -1,4 +1,4 @@
-# 第四章：*第四章*：Windows 与 Linux 的互操作性
+# 第四章：Windows 与 Linux 的互操作性
 
 在*第一章*中，我们将 WSL 体验与在虚拟机中运行 Linux 进行了比较；虚拟机专注于隔离，而 WSL 在 Windows 和 Linux 之间具有强大的互操作性。在本章中，您将开始了解这些功能，从与在 WSL 下运行的文件和应用程序进行交互开始，以及从 Windows 主机环境访问文件。这将包括查看如何在 Windows 和 WSL 中的脚本之间传递输出。之后，我们将看看 WSL 如何使 Linux 中的 Web 应用程序可以从 Windows 访问。
 
