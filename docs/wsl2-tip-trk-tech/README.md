@@ -1,6 +1,6 @@
-# C++ 高级量化金融
+# WSL2 提示和技巧
 
-> 原文：[`zh.annas-archive.org/md5/0F4C0352DDAD129C371BB77E739BD2E4`](https://zh.annas-archive.org/md5/0F4C0352DDAD129C371BB77E739BD2E4)
+> 原文：[`zh.annas-archive.org/md5/5EBC4B193F90421D3484B13463D11C33`](https://zh.annas-archive.org/md5/5EBC4B193F90421D3484B13463D11C33)
 > 
 > 译者：[飞龙](https://github.com/wizardforcel)
 > 

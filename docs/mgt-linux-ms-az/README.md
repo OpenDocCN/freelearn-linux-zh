@@ -1,6 +1,6 @@
-# C++ 高级量化金融
+# 将 Linux 迁移到微软 Azure
 
-> 原文：[`zh.annas-archive.org/md5/0F4C0352DDAD129C371BB77E739BD2E4`](https://zh.annas-archive.org/md5/0F4C0352DDAD129C371BB77E739BD2E4)
+> 原文：[`zh.annas-archive.org/md5/DFC4E6F489A560394D390945DB597424`](https://zh.annas-archive.org/md5/DFC4E6F489A560394D390945DB597424)
 > 
 > 译者：[飞龙](https://github.com/wizardforcel)
 > 

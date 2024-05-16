@@ -1,6 +1,6 @@
-# C++ 高级量化金融
+# 精通 Linux 内核开发
 
-> 原文：[`zh.annas-archive.org/md5/0F4C0352DDAD129C371BB77E739BD2E4`](https://zh.annas-archive.org/md5/0F4C0352DDAD129C371BB77E739BD2E4)
+> 原文：[`zh.annas-archive.org/md5/B50238228DC7DE75D9C3CCE2886AAED2`](https://zh.annas-archive.org/md5/B50238228DC7DE75D9C3CCE2886AAED2)
 > 
 > 译者：[飞龙](https://github.com/wizardforcel)
 > 

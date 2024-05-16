@@ -1,3 +1,4 @@
++   [Azure 上的 Linux 管理实用指南](README.md)
 +   [前言](hsn-linux-adm-az_00.md)
 +   [第一章：探索微软 Azure 云](hsn-linux-adm-az_01.md)
 +   [第二章：开始使用 Azure 云](hsn-linux-adm-az_02.md)

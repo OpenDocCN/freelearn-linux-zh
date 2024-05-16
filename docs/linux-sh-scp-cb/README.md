@@ -1,6 +1,6 @@
-# C++ 高级量化金融
+# Linux Shell 编程秘籍
 
-> 原文：[`zh.annas-archive.org/md5/0F4C0352DDAD129C371BB77E739BD2E4`](https://zh.annas-archive.org/md5/0F4C0352DDAD129C371BB77E739BD2E4)
+> 原文：[`zh.annas-archive.org/md5/ABA4B56CB4F69896DB2E9CFE0817AFEF`](https://zh.annas-archive.org/md5/ABA4B56CB4F69896DB2E9CFE0817AFEF)
 > 
 > 译者：[飞龙](https://github.com/wizardforcel)
 > 

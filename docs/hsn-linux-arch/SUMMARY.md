@@ -1,3 +1,4 @@
++   [Linux 架构实用手册](README.md)
 +   [前言](hsn-linux-arch_00.md)
 +   [第一部分：使用 GlusterFS 的高性能存储解决方案](hsn-linux-arch_01.md)
 +   [第一章：设计方法论简介](hsn-linux-arch_02.md)

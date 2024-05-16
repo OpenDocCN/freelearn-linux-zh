@@ -1,3 +1,4 @@
++   [Linux 基础知识](README.md)
 +   [前言](fund-linux_0.md)
 +   [第一章：Linux 简介](fund-linux_1.md)
 +   [第二章：Linux 命令行](fund-linux_2.md)

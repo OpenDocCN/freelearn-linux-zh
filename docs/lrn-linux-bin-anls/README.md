@@ -1,6 +1,6 @@
-# C++ 高级量化金融
+# Linux 二进制分析学习手册
 
-> 原文：[`zh.annas-archive.org/md5/0F4C0352DDAD129C371BB77E739BD2E4`](https://zh.annas-archive.org/md5/0F4C0352DDAD129C371BB77E739BD2E4)
+> 原文：[`zh.annas-archive.org/md5/557450C26A7CBA64AA60AA031A39EC59`](https://zh.annas-archive.org/md5/557450C26A7CBA64AA60AA031A39EC59)
 > 
 > 译者：[飞龙](https://github.com/wizardforcel)
 > 
