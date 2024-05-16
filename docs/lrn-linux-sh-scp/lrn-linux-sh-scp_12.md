@@ -34,15 +34,7 @@
 
 你可以在 Linux 文件系统树中找到这些文件，就像大多数特殊文件一样。让我们检查一下我们的虚拟机：
 
-```
-reader@ubuntu:~$ cd /dev/fd/
-reader@ubuntu:/dev/fd$ ls -l
-total 0
-lrwx------ 1 reader reader 64 Nov  5 18:54 0 -> /dev/pts/0
-lrwx------ 1 reader reader 64 Nov  5 18:54 1 -> /dev/pts/0
-lrwx------ 1 reader reader 64 Nov  5 18:54 2 -> /dev/pts/0
-lrwx------ 1 reader reader 64 Nov  5 18:54 255 -> /dev/pts/0
-```
+[PRE0]
 
 在这里找到的四个文件中，有三个很重要：`/dev/fd/0`、`/dev/fd/1`和`/dev/fd/2`。
 
@@ -50,28 +42,7 @@ lrwx------ 1 reader reader 64 Nov  5 18:54 255 -> /dev/pts/0
 
 在这种情况下，**pts**代表**伪终端从属**，这是对 SSH 连接的定义。看看当我们从三个不同的位置查看`/dev/fd`时会发生什么：
 
-```
-# SSH connection 1
-reader@ubuntu:~/scripts/chapter_12$ ls -l /dev/fd/
-total 0
-lrwx------ 1 reader reader 64 Nov  5 19:06 0 -> /dev/pts/0
-lrwx------ 1 reader reader 64 Nov  5 19:06 1 -> /dev/pts/0
-lrwx------ 1 reader reader 64 Nov  5 19:06 2 -> /dev/pts/0
-
-# SSH connection 2
-reader@ubuntu:/dev/fd$ ls -l
-total 0
-lrwx------ 1 reader reader 64 Nov  5 18:54 0 -> /dev/pts/1
-lrwx------ 1 reader reader 64 Nov  5 18:54 1 -> /dev/pts/1
-lrwx------ 1 reader reader 64 Nov  5 18:54 2 -> /dev/pts/1
-
-# Virtual machine terminal
-reader@ubuntu:/dev/fd$ ls -l
-total 0
-lrwx------ 1 reader reader 64 Nov  5 19:08 0 -> /dev/tty/1
-lrwx------ 1 reader reader 64 Nov  5 19:08 1 -> /dev/tty/1
-lrwx------ 1 reader reader 64 Nov  5 19:08 2 -> /dev/tty/1
-```
+[PRE1]
 
 每个连接都有自己的`/dev/`挂载（存储在内存中的`udev`类型），这就是为什么我们看不到一个连接的输出进入另一个连接的原因。
 
@@ -109,32 +80,19 @@ lrwx------ 1 reader reader 64 Nov  5 19:08 2 -> /dev/tty/1
 
 大多数命令的输出将是*标准输出*，写入`/dev/fd/1`上的`stdout`。通过使用`>`符号，我们可以使用以下语法重定向输出：
 
-```
-command > output-file
-```
+[PRE2]
 
 重定向将始终指向一个文件（然而，正如我们所知，不是所有文件都是相等的，因此在常规示例之后，我们将向您展示一些 Bash 魔法，涉及非常规文件）。如果文件不存在，它将被创建。如果存在，它将被**覆盖**。
 
 在其最简单的形式中，通常会打印到终端的所有内容都可以重定向到文件：
 
-```
-reader@ubuntu:~/scripts/chapter_12$ ls -l /var/log/dpkg.log 
--rw-r--r-- 1 root root 737150 Nov  5 18:49 /var/log/dpkg.log
-reader@ubuntu:~/scripts/chapter_12$ cat /var/log/dpkg.log > redirected-file.log
-reader@ubuntu:~/scripts/chapter_12$ ls -l
-total 724
--rw-rw-r-- 1 reader reader 737150 Nov  5 19:45 redirected-file.log
-```
+[PRE3]
 
 如你所知，`cat`将整个文件内容打印到你的终端。实际上，它实际上将整个内容发送到`stdout`，它绑定到`/dev/fd/1`，它绑定到你的终端；这就是为什么你看到它。
 
 现在，如果我们将文件的内容重定向回另一个文件，我们实际上已经做出了很大的努力...复制一个文件！从文件大小可以看出，实际上是相同的文件。如果你不确定，你可以使用`diff`命令来查看文件是否相同：
 
-```
-reader@ubuntu:~/scripts/chapter_12$ diff /var/log/dpkg.log redirected-file.log 
-reader@ubuntu:~/scripts/chapter_12$ echo $?
-0
-```
+[PRE4]
 
 如果`diff`没有返回任何输出，并且它的退出代码为`0`，则文件没有差异。
 
@@ -142,58 +100,17 @@ reader@ubuntu:~/scripts/chapter_12$ echo $?
 
 首先，让我们构建一个简单的脚本来进一步说明这一点：
 
-```
-reader@ubuntu:~/scripts/chapter_12$ vim redirect-to-file.sh 
-reader@ubuntu:~/scripts/chapter_12$ cat redirect-to-file.sh 
-#!/bin/bash
-
-#####################################
-# Author: Sebastiaan Tammer
-# Version: v1.0.0
-# Date: 2018-11-05
-# Description: Redirect user input to file.
-# Usage: ./redirect-to-file.sh
-#####################################
-
-# Capture the users' input.
-read -p "Type anything you like: " user_input
-
-# Save the users' input to a file.
-echo ${user_input} > redirect-to-file.txt
-```
+[PRE5]
 
 现在，当我们运行这个脚本时，`read`会提示我们输入一些文本。这将保存在`user_input`变量中。然后，我们将使用`echo`将`user_input`变量的内容发送到`stdout`。但是，它不会通过`/dev/fd/1`到达终端上的`/dev/pts/0`，而是重定向到`redirect-to-file.txt`文件中。
 
 总的来说，它看起来像这样：
 
-```
-reader@ubuntu:~/scripts/chapter_12$ bash redirect-to-file.sh 
-Type anything you like: I like dogs! And cats. Maybe a gecko?
-reader@ubuntu:~/scripts/chapter_12$ ls -l
-total 732
--rw-rw-r-- 1 reader reader 737150 Nov  5 19:45 redirected-file.log
--rw-rw-r-- 1 reader reader    383 Nov  5 19:58 redirect-to-file.sh
--rw-rw-r-- 1 reader reader     38 Nov  5 19:58 redirect-to-file.txt
-reader@ubuntu:~/scripts/chapter_12$ cat redirect-to-file.txt
-I like dogs! And cats. Maybe a gecko?
-```
+[PRE6]
 
 现在，这个脚本按照预期工作。然而，如果我们再次运行它，我们会看到这个脚本可能出现的两个问题：
 
-```
-reader@ubuntu:~/scripts$ bash chapter_12/redirect-to-file.sh
-Type anything you like: Hello
-reader@ubuntu:~/scripts$ ls -l
-<SNIPPED>
-drwxrwxr-x 2 reader reader 4096 Nov  5 19:58 chapter_12
--rw-rw-r-- 1 reader reader    6 Nov  5 20:02 redirect-to-file.txt
-reader@ubuntu:~/scripts$ bash chapter_12/redirect-to-file.sh
-Type anything you like: Bye
-reader@ubuntu:~/scripts$ ls -l
-<SNIPPED>
-drwxrwxr-x 2 reader reader 4096 Nov  5 19:58 chapter_12
--rw-rw-r-- 1 reader reader    4 Nov  5 20:02 redirect-to-file.txt
-```
+[PRE7]
 
 第一件出错的事情，正如我们之前警告过的，是相对路径可能会搞乱文件的写入位置。
 
@@ -205,60 +122,17 @@ drwxrwxr-x 2 reader reader 4096 Nov  5 19:58 chapter_12
 
 让我们在脚本的新版本中解决这两个问题：
 
-```
-reader@ubuntu:~/scripts$ vim chapter_12/redirect-to-file.sh 
-reader@ubuntu:~/scripts$ cat chapter_12/redirect-to-file.sh 
-#!/bin/bash
-
-#####################################
-# Author: Sebastiaan Tammer
-# Version: v1.1.0
-# Date: 2018-11-05
-# Description: Redirect user input to file.
-# Usage: ./redirect-to-file.sh
-#####################################
-
-# Since we're dealing with paths, set current working directory.
-cd $(dirname $0)
-
-# Capture the users' input.
-read -p "Type anything you like: " user_input
-
-# Save the users' input to a file. > for overwrite, >> for append.
-echo ${user_input} >> redirect-to-file.txt
-```
+[PRE8]
 
 现在，如果我们运行它（无论在哪里），我们会看到新的文本被追加到第一句话，“我喜欢狗！还有猫。也许是壁虎？”在`/home/reader/chapter_12/redirect-to-file.txt`文件中：
 
-```
-reader@ubuntu:~/scripts$ cd /tmp/
-reader@ubuntu:/tmp$ cat /home/reader/scripts/chapter_12/redirect-to-file.txt 
-I like dogs! And cats. Maybe a gecko?
-reader@ubuntu:/tmp$ bash /home/reader/scripts/chapter_12/redirect-to-file.sh
-Type anything you like: Definitely a gecko, those things are awesome!
-reader@ubuntu:/tmp$ cat /home/reader/scripts/chapter_12/redirect-to-file.txt 
-I like dogs! And cats. Maybe a gecko?
-Definitely a gecko, those things are awesome!
-```
+[PRE9]
 
 所以，`cd $(dirname $0)` 帮助我们处理相对路径，`>>` 而不是 `>` 确保追加而不是覆盖。正如你所期望的那样，`>>` 再次代表 `1>>`，当我们开始稍后重定向 `stderr` 流时，我们会看到这一点。
 
 不久前，我们向你承诺了一些 Bash 魔法。虽然不完全是魔法，但可能会让你的头有点疼：
 
-```
-reader@ubuntu:~/scripts/chapter_12$ cat redirect-to-file.txt 
-I like dogs! And cats. Maybe a gecko?
-Definitely a gecko, those things are awesome!
-reader@ubuntu:~/scripts/chapter_12$ cat redirect-to-file.txt > /dev/pts/0
-I like dogs! And cats. Maybe a gecko?
-Definitely a gecko, those things are awesome!
-reader@ubuntu:~/scripts/chapter_12$ cat redirect-to-file.txt > /dev/fd/1
-I like dogs! And cats. Maybe a gecko?
-Definitely a gecko, those things are awesome!
-reader@ubuntu:~/scripts/chapter_12$ cat redirect-to-file.txt > /dev/fd/2
-I like dogs! And cats. Maybe a gecko?
-Definitely a gecko, those things are awesome!
-```
+[PRE10]
 
 所以，我们成功地使用`cat`四次打印了我们的文件。你可能会想，我们也可以用`for`来做，但是这个教训不是我们打印消息的次数，而是我们是如何做到的！
 
@@ -274,19 +148,7 @@ Definitely a gecko, those things are awesome!
 
 因此，在我们的示例中，我们滥用了 `stderr` 文件描述符来打印到终端；这是不好的做法。我们保证不会再这样做了。那么，我们如何*实际*处理 `stderr` 消息呢？
 
-```
-reader@ubuntu:/tmp$ cat /root/
-cat: /root/: Permission denied
-reader@ubuntu:/tmp$ cat /root/ 1> error-file
-cat: /root/: Permission denied
-reader@ubuntu:/tmp$ ls -l
--rw-rw-r-- 1 reader reader    0 Nov  5 20:35 error-file
-reader@ubuntu:/tmp$ cat /root/ 2> error-file
-reader@ubuntu:/tmp$ ls -l
--rw-rw-r-- 1 reader reader   31 Nov  5 20:35 error-file
-reader@ubuntu:/tmp$ cat error-file 
-cat: /root/: Permission denied
-```
+[PRE11]
 
 这种交互应该说明一些事情。首先，当`cat /root/`抛出`Permission denied`错误时，它将其发送到`stderr`而不是`stdout`。我们可以看到这一点，因为当我们执行相同的命令，但尝试用`1> error-file`重定向*标准* *输出*时，我们仍然在终端上看到输出，并且我们还看到`error-file`是空的。
 
@@ -298,27 +160,7 @@ cat: /root/: Permission denied
 
 作为对编程和编译的预览，请看这个（如果你不完全理解这个，不要担心）：
 
-```
-reader@ubuntu:~/scripts/chapter_12$ vim stderr.c 
-reader@ubuntu:~/scripts/chapter_12$ cat stderr.c 
-#include <stdio.h>
-int main()
-{
-  // Print messages to stdout and stderr.
-  fprintf(stdout, "This is sent to stdout.\n");
-  fprintf(stderr, "This is sent to stderr.\n");
-  return 0;
-}
-
-reader@ubuntu:~/scripts/chapter_12$ gcc stderr.c -o stderr
-reader@ubuntu:~/scripts/chapter_12$ ls -l
-total 744
--rw-rw-r-- 1 reader reader 737150 Nov  5 19:45 redirected-file.log
--rw-rw-r-- 1 reader reader    501 Nov  5 20:09 redirect-to-file.sh
--rw-rw-r-- 1 reader reader     84 Nov  5 20:13 redirect-to-file.txt
--rwxrwxr-x 1 reader reader   8392 Nov  5 20:46 stderr
--rw-rw-r-- 1 reader reader    185 Nov  5 20:46 stderr.c
-```
+[PRE12]
 
 `gcc stderr.c -o stderr`命令将在`stderr.c`中找到的源代码编译为二进制文件`stderr`。
 
@@ -326,34 +168,17 @@ total 744
 
 如果我们运行我们的程序，我们会得到两行输出。因为这不是一个 Bash 脚本，我们不能用`bash stderr`来执行它。我们需要用`chmod`使二进制文件可执行，并用`./stderr`来运行它：
 
-```
-reader@ubuntu:~/scripts/chapter_12$ bash stderr
-stderr: stderr: cannot execute binary file
-reader@ubuntu:~/scripts/chapter_12$ chmod +x stderr
-reader@ubuntu:~/scripts/chapter_12$ ./stderr 
-This is sent to stdout.
-This is sent to stderr.
-```
+[PRE13]
 
 现在，让我们看看当我们开始重定向部分输出时会发生什么：
 
-```
-reader@ubuntu:~/scripts/chapter_12$ ./stderr > /tmp/stdout
-This is sent to stderr.
-reader@ubuntu:~/scripts/chapter_12$ cat /tmp/stdout 
-This is sent to stdout.
-```
+[PRE14]
 
 因为我们只重定向了`stdout`（最后提醒：`>`等于`1>`）到完全限定的文件`/tmp/stdout`，`stderr`消息仍然被打印到终端上。
 
 另一种方式会得到类似的结果：
 
-```
-reader@ubuntu:~/scripts/chapter_12$ ./stderr 2> /tmp/stderr
-This is sent to stdout.
-reader@ubuntu:~/scripts/chapter_12$ cat /tmp/stderr 
-This is sent to stderr.
-```
+[PRE15]
 
 现在，当我们只使用`2> /tmp/stderr`来重定向`stderr`时，我们会看到`stdout`消息出现在我们的终端上，而`stderr`被正确地重定向到`/tmp/stderr`文件中。
 
@@ -371,15 +196,7 @@ This is sent to stderr.
 
 让我们回顾一下我们之前的例子，看看这是如何让我们的生活变得更容易的：
 
-```
-reader@ubuntu:~/scripts/chapter_12$ ./stderr
-This is sent to stdout.
-This is sent to stderr.
-reader@ubuntu:~/scripts/chapter_12$ ./stderr &> /tmp/output
-reader@ubuntu:~/scripts/chapter_12$ cat /tmp/output
-This is sent to stderr.
-This is sent to stdout.
-```
+[PRE16]
 
 太棒了！有了这个语法，我们就不再需要担心不同的输出流。当你使用新命令时，这是特别实用的；在这种情况下，你可能会错过一些有趣的错误消息，因为`stderr`流没有被保存。
 
@@ -401,72 +218,25 @@ This is sent to stdout.
 
 这很重要，因为当重定向无法成功完成时会发生什么：
 
-```
-reader@ubuntu:~/scripts/chapter_12$ ./stderr &> /root/file
--bash: /root/file: Permission denied
-reader@ubuntu:~/scripts/chapter_12$ echo $?
-1
-```
+[PRE17]
 
 这个操作失败了（因为`reader`用户显然无法在`root`超级用户的主目录中写入）。
 
 看看当我们尝试使用`/dev/null`做同样的事情时会发生什么：
 
-```
-reader@ubuntu:~/scripts/chapter_12$ ./stderr &> /dev/null 
-reader@ubuntu:~/scripts/chapter_12$ echo $?
-0
-reader@ubuntu:~/scripts/chapter_12$ cat /dev/null 
-reader@ubuntu:~/scripts/chapter_12$
-```
+[PRE18]
 
 就是这样。所有的输出都消失了（因为`&>`重定向了`stdout`和`stderr`），但命令仍然报告了期望的退出状态`0`。当我们确保数据已经消失时，我们使用`cat /dev/null`，结果什么也没有。
 
 我们将向您展示一个实际示例，您在脚本中经常会使用到：
 
-```
-reader@ubuntu:~/scripts/chapter_12$ vim find.sh 
-reader@ubuntu:~/scripts/chapter_12$ cat find.sh 
-#!/bin/bash
-
-#####################################
-# Author: Sebastiaan Tammer
-# Version: v1.0.0
-# Date: 2018-11-06
-# Description: Find a file.
-# Usage: ./find.sh <file-name>
-#####################################
-
-# Check for the current number of arguments.
-if [[ $# -ne 1 ]]; then
-  echo "Wrong number of arguments!"
-  echo "Usage: $0 <file-name>"
-  exit 1
-fi
-
-# Name of the file to search for.
-file_name=$1
-
-# Redirect all errors to /dev/null, so they don't clutter the terminal.
-find / -name "${file_name}" 2> /dev/null
-```
+[PRE19]
 
 这个脚本只包含我们之前介绍过的结构，除了对`stderr`进行`/dev/null`重定向。虽然这个`find.sh`脚本实际上只是`find`命令的一个简单包装器，但它确实有很大的区别。
 
 看看当我们使用`find`查找文件`find.sh`时会发生什么（因为为什么不呢！）：
 
-```
-reader@ubuntu:~/scripts/chapter_12$ find / -name find.sh
-find: ‘/etc/ssl/private’: Permission denied
-find: ‘/etc/polkit-1/localauthority’: Permission denied
-<SNIPPED>
-find: ‘/sys/fs/pstore’: Permission denied
-find: ‘/sys/fs/fuse/connections/48’: Permission denied
-/home/reader/scripts/chapter_12/find.sh
-find: ‘/data/devops-files’: Permission denied
-find: ‘/data/dev-files’: Permission denied
-<SNIPPED>
-```
+[PRE20]
 
 我们删掉了大约 95%的输出，因为您可能会同意，五页的`Permission denied`错误没有多少价值。因为我们是以普通用户身份运行`find`，所以我们无法访问系统的许多部分。这些错误反映了这一点。
 
@@ -474,10 +244,7 @@ find: ‘/data/dev-files’: Permission denied
 
 现在，让我们用我们的包装脚本寻找同一个文件：
 
-```
-reader@ubuntu:~/scripts/chapter_12$ bash find.sh find.sh
-/home/reader/scripts/chapter_12/find.sh
-```
+[PRE21]
 
 我们走了！相同的结果，但没有那些让我们困惑的烦人错误。由于`Permission denied`错误被发送到`stderr`流，我们在`find`命令之后使用`2> /dev/null` *删除*了它们。
 
@@ -495,16 +262,7 @@ reader@ubuntu:~/scripts/chapter_12$ bash find.sh find.sh
 
 现在，我们还可以使用这些空字节来为磁盘分配字节：
 
-```
-reader@ubuntu:/tmp$ ls -l
--rw-rw-r-- 1 reader reader   48 Nov  6 19:26 output
-reader@ubuntu:/tmp$ head -c 1024 /dev/zero > allocated-file
-reader@ubuntu:/tmp$ ls -l
--rw-rw-r-- 1 reader reader 1024 Nov  6 20:09 allocated-file
--rw-rw-r-- 1 reader reader   48 Nov  6 19:26 output
-reader@ubuntu:/tmp$ cat allocated-file 
-reader@ubuntu:/tmp$ 
-```
+[PRE22]
 
 通过使用`head -c 1024`，我们指定要从`/dev/zero`中获取*前 1024 个字符*。因为`/dev/zero`只提供空字节，这些字节都将是相同的，但我们确切知道会有`1024`个。
 
@@ -512,15 +270,7 @@ reader@ubuntu:/tmp$
 
 如果您在脚本中需要执行此操作，还有另一个选项：`fallocate`：
 
-```
-reader@ubuntu:/tmp$ fallocate --length 1024 fallocated-file
-reader@ubuntu:/tmp$ ls -l
--rw-rw-r-- 1 reader reader 1024 Nov  6 20:09 allocated-file
--rw-rw-r-- 1 reader reader 1024 Nov  6 20:13 fallocated-file
--rw-rw-r-- 1 reader reader   48 Nov  6 19:26 output
-reader@ubuntu:/tmp$ cat fallocated-file 
-reader@ubuntu:/tmp$ 
-```
+[PRE23]
 
 从前面的输出中可以看出，这个命令与我们已经通过`/dev/zero`读取和重定向实现的功能完全相同（如果`fallocate`实际上是从`/dev/zero`读取的一个花哨的包装器，我们不会感到惊讶，但我们不能确定）。
 
@@ -530,12 +280,7 @@ reader@ubuntu:/tmp$
 
 输入通常来自您的键盘，通过终端传递给命令。最简单的例子是`read`命令：它从`stdin`读取，直到遇到换行符（按下*Enter*键时），然后将输入保存到`REPLY`变量（或者如果您提供了该参数，则保存到任何自定义变量）。它看起来有点像这样：
 
-```
-reader@ubuntu:~$ read -p "Type something: " answer
-Type something: Something
-reader@ubuntu:~$ echo ${answer}
-something
-```
+[PRE24]
 
 简单。现在，假设我们以非交互方式运行此命令，这意味着我们无法使用键盘和终端提供信息（对于`read`来说不是真正的用例，但这是一个很好的例子）。
 
@@ -543,12 +288,7 @@ something
 
 让我们通过将`stdin`重定向到文件而不是终端，以非交互方式使用`read`：
 
-```
-reader@ubuntu:/tmp$ echo "Something else" > answer-file
-reader@ubuntu:/tmp$ read -p "Type something: " new_answer < answer-file
-reader@ubuntu:/tmp$ echo ${new_answer}
-Something else
-```
+[PRE25]
 
 为了表明我们没有作弊并重复使用`${answer}`变量中已经存储的答案，我们已经将`read`中的回复重命名为`${new_answer}`。
 
@@ -570,14 +310,7 @@ Something else
 
 您可以通过使用`head -1`从`/dev/urandom`中抓取'第一行'来查看随机性。由于一行以换行符结尾，命令`head -1 /dev/urandom`将打印直到第一个换行符之前的所有内容：这可能是少量或大量字符：
 
-```
-reader@ubuntu:/tmp$ head -1 /dev/urandom 
-~d=G1���RB�Ҫ��"@
-                F��OJ2�%�=�8�#,�t�7���M���s��Oѵ�w��k�qݙ����W��E�h��Q"x8��l�d��P�,�.:�m�[Lb/A�J�ő�M�o�v��
-                                                                                                        �
-reader@ubuntu:/tmp$ head -1 /dev/urandom 
-��o�u���'��+�)T�M���K�K����Y��G�g".!{R^d8L��s5c*�.đ�
-```
+[PRE26]
 
 我们第一次运行时打印了更多的字符（并非所有字符都可读）比第二次运行时；这可以直接与生成的字节的随机性联系起来。第二次我们运行`head -1 /dev/urandom`时，我们比第一次迭代更快地遇到了换行字节 0x0A。
 
@@ -587,40 +320,7 @@ reader@ubuntu:/tmp$ head -1 /dev/urandom
 
 更好的是，我们可以使用来自`/dev/urandom`的输入重定向来完成这个任务，再加上`tr`命令。一个简单的脚本看起来是这样的：
 
-```
-reader@ubuntu:~/scripts/chapter_12$ vim password-generator.sh 
-reader@ubuntu:~/scripts/chapter_12$ cat password-generator.sh 
-#!/bin/bash
-
-#####################################
-# Author: Sebastiaan Tammer
-# Version: v1.0.0
-# Date: 2018-11-06
-# Description: Generate a password.
-# Usage: ./password-generator.sh <length>
-#####################################
-
-# Check for the current number of arguments.
-if [[ $# -ne 1 ]]; then
-  echo "Wrong number of arguments!"
-  echo "Usage: $0 <length>"
-  exit 1
-fi
-
-# Verify the length argument.
-if [[ ! $1 =~ ^[[:digit:]]+$ ]]; then
-  echo "Please enter a length (number)."
-  exit 1
-fi
-
-password_length=$1
-
-# tr grabs readable characters from input, deletes the rest.
-# Input for tr comes from /dev/urandom, via input redirection.
-# echo makes sure a newline is printed.
-tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c ${password_length}
-echo
-```
+[PRE27]
 
 标题和输入检查，甚至包括使用正则表达式检查数字的检查，现在应该是清楚的。
 
@@ -636,25 +336,7 @@ echo
 
 在命令行上尝试以下操作，并尝试理解为什么会得到您看到的结果：
 
-```
-reader@ubuntu:~/scripts/chapter_12$ cat stderr.c 
-#include <stdio.h>
-int main()
-{
-  // Print messages to stdout and stderr.
-  fprintf(stdout, "This is sent to stdout.\n");
-  fprintf(stderr, "This is sent to stderr.\n");
-  return 0;
-}
-
-reader@ubuntu:~/scripts/chapter_12$ grep 'stderr' < stderr.c 
-  // Print messages to stdout and stderr.
-  fprintf(stderr, "This is sent to stderr.\n");
-reader@ubuntu:~/scripts/chapter_12$ grep 'stderr' < stderr.c > /tmp/grep-file
-reader@ubuntu:~/scripts/chapter_12$ cat /tmp/grep-file 
-  // Print messages to stdout and stderr.
-  fprintf(stderr, "This is sent to stderr.\n");
-```
+[PRE28]
 
 正如您所看到的，我们可以在同一行上使用`<`和`>`来重定向输入和输出。首先，我们在`grep 'stderr' < stderr.c`命令中使用了输入重定向的`grep`（这在技术上也是`grep 'stderr' stderr.c`所做的）。我们在终端中看到了输出。
 
@@ -662,12 +344,7 @@ reader@ubuntu:~/scripts/chapter_12$ cat /tmp/grep-file
 
 由于我们现在处于本章的高级部分，我们将演示输入重定向放在哪里实际上并不重要：
 
-```
-reader@ubuntu:~/scripts/chapter_12$ < stderr.c grep 'stdout' > /tmp/grep-file-stdout
-reader@ubuntu:~/scripts/chapter_12$ cat /tmp/grep-file-stdout 
- // Print messages to stdout and stderr.
- fprintf(stdout, "This is sent to stdout.\n");
-```
+[PRE29]
 
 在这里，我们在命令的开头指定了输入重定向。对我们来说，当考虑流程时，这似乎是更合乎逻辑的方法，但这会导致实际命令（`grep`）出现在命令的大致中间，这会破坏可读性。
 
@@ -681,35 +358,13 @@ reader@ubuntu:~/scripts/chapter_12$ cat /tmp/grep-file-stdout
 
 你可以这样实现：
 
-```
-reader@ubuntu:/tmp$ cat /etc/shadow
-cat: /etc/shadow: Permission denied
-reader@ubuntu:/tmp$ cat /etc/shadow > shadow
-cat: /etc/shadow: Permission denied
-reader@ubuntu:/tmp$ cat shadow 
-#Still empty, since stderr wasn't redirected to the file.
-reader@ubuntu:/tmp$ cat /etc/shadow > shadow 2>&1 
-#Redirect fd2 to fd1 (stderr to stdout).
-reader@ubuntu:/tmp$ cat shadow 
-cat: /etc/shadow: Permission denied
-```
+[PRE30]
 
 记住，你不再需要在 Bash 4.x 中使用这种语法，但是如果你想要使用自定义的文件描述符作为输入/输出流，这将是有用的知识。通过以`2>&1`结束命令，我们将所有`stderr`输出（`2>`）写入`stdout`描述符（`&1`）。
 
 我们也可以反过来做：
 
-```
-reader@ubuntu:/tmp$ head -1 /etc/passwd
-root:x:0:0:root:/root:/bin/bash
-reader@ubuntu:/tmp$ head -1 /etc/passwd 2> passwd
-root:x:0:0:root:/root:/bin/bash
-reader@ubuntu:/tmp$ cat passwd
-#Still empty, since stdout wasn't redirected to the file.
-reader@ubuntu:/tmp$ head -1 /etc/passwd 2> passwd 1>&2
-#Redirect fd1 to fd2 (stdout to stderr).
-reader@ubuntu:/tmp$ cat passwd 
-root:x:0:0:root:/root:/bin/bash
-```
+[PRE31]
 
 所以现在，我们将`stderr`流重定向到`passwd`文件。然而，`head -1 /etc/passwd`命令只提供了一个`stdout`流；我们看到它被打印到终端而不是文件中。
 
@@ -727,11 +382,7 @@ root:x:0:0:root:/root:/bin/bash
 
 如果没有命令替换，我们需要在再次使用它之前将输出存储在某个地方：
 
-```
-dirname $0 > directory-file
-cd < directory-file
-rm directory-file
-```
+[PRE32]
 
 虽然这有时会起作用，但这里有一些陷阱：
 
@@ -745,29 +396,7 @@ rm directory-file
 
 命令替换实际上在 Bash 脚本中经常使用。看看以下的例子，我们在其中使用命令替换来实例化和填充一个变量：
 
-```
-reader@ubuntu:~/scripts/chapter_12$ vim simple-password-generator.sh 
-reader@ubuntu:~/scripts/chapter_12$ cat simple-password-generator.sh 
-#!/bin/bash
-
-#####################################
-# Author: Sebastiaan Tammer
-# Version: v1.0.0
-# Date: 2018-11-10
-# Description: Use command substitution with a variable.
-# Usage: ./simple-password-generator.sh
-#####################################
-
-# Write a random string to a variable using command substitution.
-random_password=$(tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 20)
-
-echo "Your random password is: ${random_password}"
-
-reader@ubuntu:~/scripts/chapter_12$ bash simple-password-generator.sh 
-Your random password is: T3noJ3Udf8a2eQbqPiad
-reader@ubuntu:~/scripts/chapter_12$ bash simple-password-generator.sh 
-Your random password is: wu3zpsrusT5zyvbTxJSn
-```
+[PRE33]
 
 在这个例子中，我们重用了我们之前的`password-generator.sh`脚本中的逻辑。这一次，我们不给用户提供输入长度的选项；我们保持简单，假设长度为 20（至少在 2018 年，这是一个相当好的密码长度）。
 
@@ -775,550 +404,15 @@ Your random password is: wu3zpsrusT5zyvbTxJSn
 
 实际上我们可以在一行中完成这个操作：
 
-```
-reader@ubuntu:~/scripts/chapter_12$ echo "Your random password is: $(tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 20)"
-Your random password is: REzCOa11pA2846fvxsa
-```
+[PRE34]
 
 然而，正如我们现在已经讨论了很多次，*可读性很重要*（仍然！）。我们认为在实际使用之前首先将其写入具有描述性名称的变量，可以增加脚本的可读性。
 
 此外，如果我们想要多次使用相同的随机值，我们无论如何都需要一个变量。因此，在这种情况下，脚本中的额外冗长帮助我们并且是可取的。
 
-`$(..)`的前身是使用反引号，即`` ` ``字符（在英语国际键盘上的“1”旁边）。`$(cd dirname $0)`以前写为`` `cd dirname $0` ``。虽然这与新的（更好的）`$(..)`语法做的事情相同，有两件事经常与反斜线有关：单词拆分和换行。这些都是由空白引起的问题。使用新的语法要容易得多，而且不必担心这样的事情！
+`$(..)`的前身是使用反引号，即`` ` ``字符（在英语国际键盘上的`1`旁边）。`$(cd dirname $0)`以前写为`` `cd dirname $0` ``。虽然这与新的（更好的）`$(..)`语法做的事情相同，有两件事经常与反斜线有关：单词拆分和换行。这些都是由空白引起的问题。使用新的语法要容易得多，而且不必担心这样的事情！
 
-# Process substitution
-
-Something closely related to command substitution is *process substitution.* The syntax is as follows:
-
-```
-
-<(command)
-
-```
-
-It works very similarly to command substitution, but instead of sending the output of a command as a string somewhere, you can reference the output as a file. This means that some commands, which do not expect a string but instead a reference to a file, can be used with dynamic input as well.
-
-While too advanced to discuss in great detail, here's a simple example that should get the point across:
-
-```
-
-reader@ubuntu:~/scripts/chapter_12$ diff <(ls /tmp/) <(ls /home/)
-
-1,11c1
-
-< directory-file
-
-< grep-file
-
-< grep-file-stdout
-
-< passwd
-
-< shadow
-
----
-
-> reader
-
-```
-
-The `diff` command normally compares two files and prints their differences. Now, instead of files, we used process substitution to have `diff` compare the results from `ls /tmp/` and `ls /home/`, using the `<(ls /tmp/)` syntax.
-
-# Pipes
-
-Finally, the moment we've all been waiting for: **pipes**. These near-magical constructs are used so much in Linux/Bash that everyone should know about them. Anything more complex than a single command will almost always use pipes to get to the solution.
-
-And now the big reveal: all a pipe really does is connect the `stdout` of a command to the `stdin` of another command.
-
-Wait, what?!
-
-# Binding stdout to stdin
-
-Yes, that is really all that happens. It might be a little disappointing, now that you know all about input and output redirection. However, just because the concept is simple, that doesn't mean that pipes are not **extremely powerful** and very widely used.
-
-Let's look at an example that shows how we can replace input/output redirection with a pipe:
-
-```
-
-reader@ubuntu:/tmp$ echo '飞向远方' > file
-
-reader@ubuntu:/tmp$ grep 'distance' < file
-
-飞向远方 reader@ubuntu:/tmp$ echo '飞向远方' | grep 'distance'飞向远方
-
-```
-
-For the normal redirection, we first write some text to a file (using output redirection), which we then use as input for `grep`. Next, we do the exact same functional thing, but without the file as an intermediate step.
-
-Basically, the pipe syntax is as follows:
-
-```
-
-command-with-output | command-using-input
-
-```
-
-You can use multiple pipes on a single line, and you can use any combination of pipes and input/output redirection, as long as it makes sense.
-
-Often, when you get to the point of more than two pipes/redirections, you can increase readability with an extra line, perhaps using command substitution to write the intermediate result to a variable. But, technically, you can make it as *complex* as you want; just be vigilant in not making it too *complicated*.
-
-As stated, pipes bind `stdout` to `stdin`. You might have an idea about the issue coming up: `stderr`! Look at this example of how the separation of output into `stdout` and `stderr` affects pipes:
-
-```
-
-reader@ubuntu:~/scripts/chapter_12$ cat /etc/shadow | grep 'denied'
-
-cat: /etc/shadow: 权限被拒绝
-
-reader@ubuntu:~/scripts/chapter_12$ cat /etc/shadow | grep 'denied' > /tmp/empty-file
-
-cat: /etc/shadow: 权限被拒绝 #在终端上打印到 stderr。
-
-reader@ubuntu:~/scripts/chapter_12$ cat /etc/shadow | grep 'denied' 2> /tmp/error-file
-
-cat: /etc/shadow: 权限被拒绝 #在终端上打印到 stderr。
-
-reader@ubuntu:~/scripts/chapter_12$ cat /tmp/empty-file
-
-reader@ubuntu:~/scripts/chapter_12$ cat /tmp/error-file
-
-```
-
-Now, initially this example might confuse you. Let's go through it step by step to figure it out.
-
-First, `cat /etc/shadow | grep 'denied'`. We try to `grep` the `stdout` of `cat /etc/shadow` for the word `denied`. We do not actually find it, but we see it printed on our Terminal anyway. Why? Because even though `stdout` is piped to `grep`, `stderr` is sent straight to our Terminal (and **not** through `grep`).
-
-If you're connecting via SSH to Ubuntu 18.04, you should see color highlighting by default when a `grep` is successful; in this example, you would not encounter this.
-
-The next command, `cat /etc/shadow | grep 'denied' > /tmp/empty-file`, redirects the `stdout` of **`grep`** to a file. Since `grep` did not process the error message, the file remains empty.
-
-Even if we try to redirect `stderr` at the end, as can be seen in the `cat /etc/shadow | grep 'denied' 2> /tmp/error-file` command, we still do not get any output in the file. This is because redirections **are sequential**: the output redirection only applies to the `grep`, not the `cat`.
-
-Now, in the same way output redirections have a way to redirect both `stdout` and `stderr`, so does a pipe with the `|&` syntax. Look at the same example again, now using proper redirections:
-
-```
-
-reader@ubuntu:~/scripts/chapter_12$ cat /etc/shadow |& grep 'denied'
-
-cat: /etc/shadow: 权限被拒绝
-
-reader@ubuntu:~/scripts/chapter_12$ cat /etc/shadow |& grep 'denied' > /tmp/error-file
-
-reader@ubuntu:~/scripts/chapter_12$ cat /tmp/error-file
-
-cat: /etc/shadow: 权限被拒绝
-
-reader@ubuntu:~/scripts/chapter_12$ cat /etc/shadow |& grep 'denied' 2> /tmp/error-file
-
-cat: /etc/shadow: 权限被拒绝
-
-reader@ubuntu:~/scripts/chapter_12$ cat /tmp/error-file
-
-```
-
-For the first command, if you have color syntax enabled, you will see the word `denied` is bold and colored (in our case, red). This means that now that we use `|&`, `grep` did successfully process the output.
-
-Next, when we redirect using the `stdout` of `grep`, we see that we successfully write the output to a file. If we try to redirect it with `2>`, we see it printed in the Terminal again, but not in the file. This is because of the sequential nature of redirects: as soon as `grep` successfully processes the input (which came from `stderr`), `grep` outputs this to `stdout`.
-
-`grep` actually does not know that the input was originally an `stderr` stream; as far as it is concerned, it is just `stdin` to process. And since for `grep` a successful process goes to `stdout`, that's where we find it in the end!
-
-If we want to be safe and we do not need to split the functionality of `stdout` and `stderr`, the safest way would be to use the command like this: `cat /etc/shadow |& grep 'denied' &> /tmp/file`. Since both the pipe and output redirections process `stdout` and `stderr`, we'll always end up with all output where we want it.
-
-# Practical examples
-
-Because the theory of pipes should now be relatively simple (as we got most of it out of the way when we talked about input and output redirection), we'll present a number of practical examples that really illustrate the power of pipes.
-
-It is good to remember that pipes only work on commands that accept input from `stdin`; not all do. If you pipe something to a command that totally disregards that input, you'll probably be disappointed with the results.
-
-Since we have now introduced pipes, we'll use them more liberally in the rest of the book. While these examples will present some ways of using pipes, the rest of the book will contain many more!
-
-# Yet another password generator
-
-So, we've already created two password generators. Since three is the magic number, and this is a really good example to demonstrate chaining pipes, we'll create one more (the last one, promise):
-
-```
-
-reader@ubuntu:~/scripts/chapter_12$ vim piped-passwords.sh
-
-reader@ubuntu:~/scripts/chapter_12$ cat piped-passwords.sh
-
-#!/bin/bash
-
-#####################################
-
-# 作者：Sebastiaan Tammer
-
-# 版本：v1.0.0
-
-# 日期：2018-11-10
-
-# 描述：仅使用管道生成密码。
-
-# 用法：./piped-passwords.sh
-
-#####################################
-
-password=$(head /dev/urandom | tr -dc 'a-zA-Z0-9' | head -c20)
-
-echo "您的随机密码是：${password}"
-
-```
-
-First, we grab the first 10 lines from `/dev/urandom` (the default behavior for `head`). We send this to `tr`, which trims it to the character sets we want (because it also outputs non-readable characters). Then, when we have a character set that we can use, we grab the first 20 characters from that using `head` again.
-
-If you run just `head /dev/urandom | tr -dc 'a-zA-Z0-9'` a few times, you'll see that the length differs; this is because of the randomness of the newline byte. By grabbing 10 lines from `/dev/urandom`, the chance of not having enough readable characters to create a 20-character password is very small.
-
-(Challenge to the reader: create a script with a loop that does this long enough to encounter this situation!)
-
-This example illustrates a few things. Firstly, we can often achieve a lot of things we want to do with a few smart pipes. Secondly, it is not unusual to use the same command multiple times. We could have also chosen `tail -c20` for the final command in the chain, by the way, but this has a nice symmetry to the whole command!
-
-Finally, we have seen three different password generators that do, in reality, the same thing. As always, in Bash there are many ways to accomplish the same goal; it is up to you to decide which is most applicable. Readability and performance should be the two main factors in this decision, as far as we're concerned.
-
-# Setting passwords in a script
-
-Another task that you may find yourself wanting to script is setting the password for a local user. While this is not always good practice from a security standpoint (especially for personal user accounts), it is something that is used for functional accounts (users that correspond to software, such as the Apache user running the `httpd` processes).
-
-Most of these users do not need a password, but sometimes they do. In this case, we can use pipes with the `chpasswd` command to set their passwords:
-
-```
-
-reader@ubuntu:~/scripts/chapter_12$ vim password-setter.sh
-
-reader@ubuntu:~/scripts/chapter_12$ cat password-setter.sh
-
-#!/bin/bash
-
-#####################################
-
-# 作者：Sebastiaan Tammer
-
-# 版本：v1.0.0
-
-# 日期：2018-11-10
-
-# 描述：使用 chpasswd 设置密码。
-
-# 用法：./password-setter.sh
-
-#####################################
-
-NEW_USER_NAME=bob
-
-# 验证此脚本是否以 root 权限运行。
-
-if [[ $(id -u) -ne 0 ]]; then
-
-echo "请以 root 或 sudo 身份运行！"
-
-exit 1
-
-fi
-
-# 我们只需要退出状态，将所有输出发送到/dev/null。
-
-id ${NEW_USER_NAME} &> /dev/null
-
-# 检查是否需要创建用户。
-
-if [[ $? -ne 0 ]]; then
-
-# 用户不存在，创建用户。
-
-useradd -m ${NEW_USER_NAME}
-
-fi
-
-# 为用户设置密码。
-
-echo "${NEW_USER_NAME}:password" | chpasswd
-
-```
-
-Before you run this script, remember that this adds a user to your system with a very simple (bad) password. We updated our input sanitation a bit for this script: we used command substitution to see if the script was running with root privileges. Because `id -u` returns the numerical ID for the user, which should be 0 in the case of the root user or sudo privileges, we can compare it using `-ne 0`.
-
-If we run the script and the user does not exist, we create the user before setting the password for that user. This is done by sending a `username:password` to the `stdin` of `chpasswd`, via a pipe. Do note that we used `-ne 0` twice, but for very different things: the first time for comparing a user ID, the second time with an exit status.
-
-You can probably think of multiple improvements for this script. For example, it might be good to be able to specify both the username and password instead of these hardcoded dummy values. Also, a sanity check after the `chpasswd` command is definitely a good idea. In the current iteration, the script does not give **any** feedback to the user; very bad practice.
-
-See if you can fix these issues, and be sure to remember that any input specified by the user should be checked *thoroughly*! If you really want a challenge, do this for multiple users in a `for` loop, by grabbing the input from a file.
-
-An important thing to note is that a process, when running, is visible to any user on the system. This is often not that big a problem, but if you're providing usernames and passwords directly to the script as arguments, those are visible to everyone as well. This is often only for a very short time, but they will be visible nonetheless. Always keep security in mind when dealing with sensitive issues such as passwords.
-
-# tee
-
-A command that was seemingly created to work in tandem with a pipe is `tee`. The description on the man page should tell most of the story:
-
-tee - read from standard input and write to standard output and files
-
-So, in essence, sending something to the `stdin` of `tee` (via a pipe!) allows us to save that output to both your Terminal and a file at the same time.
-
-This is often most useful when using interactive commands; it allows you to follow the output live, but also write it to a (log) file for later review. Updating a system provides a good example for the use case of `tee`:
-
-```
-
-sudo apt upgrade -y | tee /tmp/upgrade.log
-
-```
-
-We can make it even better by sending *all* output to `tee`, including `stderr`:
-
-```
-
-sudo apt upgrade -y |& tee /tmp/upgrade.log
-
-```
-
-The output will look something like this:
-
-```
-
-reader@ubuntu:~/scripts/chapter_12$ sudo apt upgrade -y |& tee /tmp/upgrade.log
-
-警告：apt 没有稳定的 CLI 界面。在脚本中谨慎使用。
-
-读取软件包列表...
-
-<SNIPPED>
-
-0 升级，0 新安装，0 删除，0 未升级。
-
-reader@ubuntu:~/scripts/chapter_12$ cat /tmp/upgrade.log
-
-警告：apt 没有稳定的 CLI 界面。在脚本中谨慎使用。
-
-读取软件包列表...
-
-<SNIPPED>
-
-0 升级，0 新安装，0 删除，0 未升级。
-
-```
-
-The first line of both the Terminal output and the log file is a `WARNING` which is sent to `stderr`; if you used `|` instead of `|&`, that would not have been written to the log file, only on the screen. If you use `|&` as advised, you will see that the output on your screen and the contents of the file are a perfect match.
-
-By default, `tee` overwrites the destination file. Like all forms of redirection, `tee` also has a way to append instead of overwrite: the `--append` (`-a`) flag. In our experience, this is often a prudent choice, not dissimilar to `|&`.
-
-While `tee` is a great asset for your command-line arsenal, it most definitely has its place in scripting as well. Once your scripts get more complex, you might want to save parts of the output to a file for later review. However, to keep the user updated on the status of a script, printing some to the Terminal might also be a good idea. If these two scenarios overlap, you'll need to use `tee` to get the job done!
-
-# Here documents
-
-The final concept we'll introduce in this chapter is the *here document*. Here documents, also called heredocs, are used to supply input to certain commands, slightly different to `stdin` redirection. Notably, it is an easy way to give multiline input to a command. It works with the following syntax:
-
-```
-
-cat << EOF
-
-输入
-
-更多输入
-
-最后一个输入
-
-EOF
-
-```
-
-If you run this in your Terminal, you'll see the following:
-
-```
-
-reader@ubuntu:~/scripts/chapter_12$ cat << EOF
-
-> 输入
-> 
-> 更多输入
-> 
-> 最后一个输入
-> 
-> EOF
-
-输入
-
-更多输入
-
-最后一个输入
-
-```
-
-The `<<` syntax lets Bash know you want to use a heredoc. Right after that, you're supplying a *delimiting identifier*. This might seem complicated, but it really means that you supply a string that will terminate the input. So, in our example, we supplied the commonly used `EOF` (short for **e**nd **o**f **f**ile).
-
-Now, if the heredoc encounters a line in the input that exactly matches the delimiting identifier, it stops listening for further input. Here's another example that illustrates this more closely:
-
-```
-
-reader@ubuntu:~/scripts/chapter_12$ cat << end-of-file
-
-> 定界符标识符是文件结束
-> 
-> 但只有当文件结束符是行上唯一的东西时才会停止
-> 
-> 文件结束符不起作用，因为它后面有文本
-> 
-> 文件结束符
-
-分隔标识符是文件结束符
-
-但只有当文件结束符是行上唯一的东西时才会停止
-
-文件结束符不起作用，因为它后面有文本
-
-```
-
-While using this with `cat` illustrates the point, it is not a very practical example. The `wall` command, however, is. `wall` lets you broadcast a message to everyone connected to the server, to their Terminal. When used in combination with a heredoc, it looks a little like this:
-
-```
-
-reader@ubuntu:~/scripts/chapter_12$ wall << EOF
-
-> 嗨，伙计们，我们很快就要重新启动，请保存你的工作！
-> 
-> 如果你浪费了宝贵的时间会很遗憾...
-> 
-> EOF
-
-来自 reader@ubuntu (pts/0) (2018 年 11 月 10 日 16:21:15)的广播消息：
-
-嗨，伙计们，我们很快就要重新启动，请保存你的工作！
-
-如果你浪费了宝贵的时间会很遗憾...
-
-```
-
-In this case, we receive our own broadcast. If you connect multiple times with your user, however, you'll see the broadcast come in there as well.
-
-Give it a try with a Terminal console connection and an SSH connection simultaneously; you'll understand it much better if you see it first-hand.
-
-# Heredocs and variables
-
-A source of confusion when using heredocs often arises from using variables. By default, variables are resolved in a heredoc, as can be seen in the following example:
-
-```
-
-reader@ubuntu:~/scripts/chapter_12$ cat << EOF
-
-> 嗨，这是$USER！
-> 
-> EOF
-
-嗨，这是 reader！
-
-```
-
-However, this might not always be desirable functionality. You might want to use this to write to a file in which the variables should be resolved later.
-
-In this case, we can quote the delimiting identifier EOF to prevent variables being substituted:
-
-```
-
-reader@ubuntu:~/scripts/chapter_12$ cat << 'EOF'
-
-> 嗨，这是$USER！
-> 
-> EOF
-
-嗨，这是$USER！
-
-```
-
-# Using heredocs for script input
-
-Since heredocs allow us to simply pass newline-delimited input to a command, we can use this to run an interactive script in a non-interactive manner! We have used this in practice, for instance, on database installer scripts that could only be run interactively. However, once you know the order of the questions and the input you want to supply, you can use the heredoc to supply this input to that interactive script.
-
-Even better, we have already created a script that uses interactive input, `/home/reader/scripts/chapter_11/while-interactive.sh`, which we can use to show this functionality: 
-
-```
-
-reader@ubuntu:/tmp$ head /home/reader/scripts/chapter_11/while-interactive.sh
-
-#!/bin/bash
-
-#####################################
-
-# 作者：Sebastiaan Tammer
-
-# 版本：v1.1.0
-
-# 日期：2018-10-28
-
-# 描述：一个简单的谜语在一个 while 循环中。
-
-# 用法：./while-interactive.sh
-
-#####################################
-
-reader@ubuntu:/tmp$ bash /home/reader/scripts/chapter_11/while-interactive.sh << EOF
-
-一个鼠标  #尝试 1。
-
-太阳  #尝试 2。
-
-键盘  #尝试 3。
-
-EOF
-
-不正确，请再试一次。 #尝试 1。
-
-不正确，请再试一次。 #尝试 2。
-
-正确，恭喜！    #尝试 3。
-
-现在我们可以在 while 循环完成后继续，太棒了！
-
-```
-
-We know that the script continues until it gets the right answer, which is either `keyboard` or `Keyboard`. We use the heredoc to send three answers, in order, to the script: `a mouse`, `the sun`, and finally `keyboard`. We can correspond the output to the input quite easily.
-
-For more verbosity, run the script with heredoc input with a `bash -x`, which will show you definitively that there are three tries to the riddle.
-
-You might want to use a here document within a nested function (which will be explained in the next chapter) or within a loop. In both cases, you should already be using indentation to improve readability. However, this impacts your heredoc, because the whitespace is considered part of the input. If you find yourself in that situation, heredocs have an extra option: `<<-` instead of `<<`. When supplying the extra `-`, all *tab characters* are ignored. This allows you to indent the heredoc construction with tabs, which maintains both readability and function.
-
-# Here strings
-
-The last thing we'd like to discuss in this chapter is the *here string*. It is very similar to the here document (hence the name), but it deals with a single string, instead of a document (who would have thought!).
-
-This construct, which uses the `<<<` syntax, can be used to supply text input to a command that perhaps normally only accepts input from `stdin` or a file. A good example for this is `bc`, which is a simple calculator (part of the GNU Project).
-
-Normally, you use it in one of two ways: sending input to `stdin` via a pipe, or by pointing `bc` to a file:
-
-```
-
-reader@ubuntu:/tmp$ echo "2⁸" | bc
-
-256
-
-reader@ubuntu:/tmp$ echo "4*4" > math
-
-reader@ubuntu:/tmp$ bc math
-
-bc 1.07.1
-
-版权所有 1991-1994, 1997, 1998, 2000, 2004, 2006, 2008, 2012-2017 自由软件基金会。
-
-这是绝对没有保修的免费软件。
-
-有关详细信息，请键入`warranty'。
-
-16
-
-^C
-
-（中断）使用 quit 退出。
-
-退出
-
-```
-
-When used with `stdin`, `bc` returns the result of the calculation. When used with a file, `bc` opens an interactive session, which we need to manually close by entering `quit`. Both ways seem a little too much work for what we want to achieve.
-
-Let's look at how a here string fixes this:
-
-```
-
-reader@ubuntu:/tmp$ bc <<< 2⁸
-
-256
-
-```
+[PRE54]
 
 就是这样。只是一个简单的输入字符串（发送到命令的`stdin`），我们得到了与使用管道的`echo`相同的功能。但是，现在只是一个命令，而不是一个链。简单但有效，正是我们喜欢的方式！
 
