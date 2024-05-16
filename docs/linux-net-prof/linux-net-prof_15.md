@@ -185,7 +185,21 @@ $AllowedSender UDP, 127.0.0.1, 192.168.0.0/16, *.coherentsecurity.com
 
 接下来，我们将向下滚动到同一文件的“全局指令”部分。就在那一行之前，我们将添加一行作为“模板”，以命名传入的文件并标识它们的位置。我们可以使用几个以“％”分隔的变量，其中最常见的如下：
 
-![在我们的配置中，我们将使用主机 IP 作为文件名，然后按日期拆分日志：```$template remote-incoming-logs, "/var/log/%$year%-%$month%-%$day%/%FROMHOST-IP%.log"*.* ?remote-incoming-logs```使用以下命令检查文件语法：```$ rsyslogd -N 1rsyslogd: version 8.2001.0, config validation run (level 1), master config /etc/rsyslog.confrsyslogd: End of config validation run. Bye.```可以用于模板化 syslog 文件的其他变量名称包括以下内容：![](img/B16336_12_Table_04.jpg)
+![](img/B16336_12_Table_03.jpg)
+    
+在我们的配置中，我们将使用主机 IP 作为文件名，然后按日期拆分日志：
+
+```
+$template remote-incoming-logs, "/var/log/%$year%-%$month%-%$day%/%FROMHOST-IP%.log"*.* ?remote-incoming-logs
+```
+使用以下命令检查文件语法：
+
+```
+$ rsyslogd -N 1
+rsyslogd: version 8.2001.0, config validation run (level 1), master config /etc/rsyslog.confrsyslogd: End of config validation run. Bye.
+```
+
+可以用于模板化 syslog 文件的其他变量名称包括以下内容：![](img/B16336_12_Table_04.jpg)
 
 现在，保存文件并重新启动`rsyslog`服务：
 

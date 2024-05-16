@@ -399,7 +399,7 @@ struct thread_info for x86 architecture (kernel 3.10):
 PER_CPU variable:
 ```
 
-**```
+```
   #ifndef _ASM_X86_CURRENT_H
   #define _ASM_X86_CURRENT_H
 
