@@ -1,3 +1,4 @@
++   [Linux Shell 编程秘籍](README.md)
 +   [前言](linux-sh-scp-cb_00.md)
 +   [第一章：外壳某事](linux-sh-scp-cb_01.md)
 +   [第二章：拥有一个好的命令](linux-sh-scp-cb_02.md)

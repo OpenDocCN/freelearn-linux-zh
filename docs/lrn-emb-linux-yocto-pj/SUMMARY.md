@@ -1,3 +1,4 @@
++   [使用 Yocto 项目学习 Linux 嵌入式编程](README.md)
 +   [前言](lrn-emb-linux-yocto-pj_00.md)
 +   [第一章：介绍](lrn-emb-linux-yocto-pj_01.md)
 +   [第二章：交叉编译](lrn-emb-linux-yocto-pj_02.md)

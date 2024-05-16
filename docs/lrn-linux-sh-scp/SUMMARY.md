@@ -1,3 +1,4 @@
++   [Linux Shell 脚本学习手册](README.md)
 +   [前言](lrn-linux-sh-scp_00.md)
 +   [第一章：介绍](lrn-linux-sh-scp_01.md)
 +   [第二章：设置您的本地环境](lrn-linux-sh-scp_02.md)

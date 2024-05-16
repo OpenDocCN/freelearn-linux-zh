@@ -1,3 +1,4 @@
++   [将 Linux 迁移到微软 Azure](README.md)
 +   [前言](mgt-linux-ms-az_0.md)
 +   [第一章：Linux：云中的历史和未来](mgt-linux-ms-az_1.md)
 +   [第二章：理解 Linux 发行版](mgt-linux-ms-az_2.md)

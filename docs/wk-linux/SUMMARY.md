@@ -1,3 +1,4 @@
++   [使用 Linux 工作](README.md)
 +   [前言](wk-linux_0.md)
 +   [第一章：介绍](wk-linux_1.md)
 +   [第二章：高效的 Shell-重新发明你的工作方式](wk-linux_2.md)

@@ -1,3 +1,4 @@
++   [红帽企业 Linux 故障排除指南](README.md)
 +   [前言](ms-linux-sh-scp_00.md)
 +   [第一章：使用 Bash 脚本的“什么”和“为什么”](ms-linux-sh-scp_01.md)
 +   [第二章：创建交互式脚本](ms-linux-sh-scp_02.md)

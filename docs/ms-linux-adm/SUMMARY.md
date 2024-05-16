@@ -1,3 +1,4 @@
++   [精通 Linux 管理](README.md)
 +   [第一章：Linux 管理简介](ms-linux-adm_00.md)
 +   [第二章：设置您的 Linux 环境](ms-linux-adm_01.md)
 +   [第三章：基本系统管理任务](ms-linux-adm_02.md)

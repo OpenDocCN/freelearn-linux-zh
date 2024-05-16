@@ -1,3 +1,4 @@
++   [精通 Linux 设备驱动开发](README.md)
 +   [前言](ms-linux-dvc-dvr-dev_00.md)
 +   [第一部分：嵌入式设备驱动程序开发的内核核心框架](ms-linux-dvc-dvr-dev_01.md)
 +   [第一章：嵌入式开发人员的 Linux 内核概念](ms-linux-dvc-dvr-dev_02.md)

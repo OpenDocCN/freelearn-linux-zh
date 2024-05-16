@@ -1,3 +1,4 @@
++   [Linux Shell 编程训练营](README.md)
 +   [前言](linux-sh-scp-bc_00.md)
 +   [第一章：开始使用 Shell 脚本](linux-sh-scp-bc_01.md)
 +   [第二章：使用变量](linux-sh-scp-bc_02.md)

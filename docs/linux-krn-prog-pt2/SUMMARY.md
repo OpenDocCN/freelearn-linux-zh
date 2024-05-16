@@ -1,3 +1,4 @@
++   [Linux 内核编程第二部分](README.md)
 +   [前言](linux-krn-prog-pt2_00.md)
 +   [第一部分：字符设备驱动程序基础知识](linux-krn-prog-pt2_01.md)
 +   [第一章：编写一个简单的杂项字符设备驱动程序](linux-krn-prog-pt2_02.md)

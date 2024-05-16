@@ -1,3 +1,4 @@
++   [精通 Linux 内核开发](README.md)
 +   [前言](ms-linux-krn-dev_00.md)
 +   [第一章：理解进程、地址空间和线程](ms-linux-krn-dev_01.md)
 +   [第二章：解密进程调度程序](ms-linux-krn-dev_02.md)

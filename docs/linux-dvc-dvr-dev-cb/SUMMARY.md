@@ -1,3 +1,4 @@
++   [Linux 设备驱动开发秘籍](README.md)
 +   [前言](linux-dvc-dvr-dev-cb_00.md)
 +   [第一章：安装开发系统](linux-dvc-dvr-dev-cb_01.md)
 +   [第二章：深入了解内核](linux-dvc-dvr-dev-cb_02.md)

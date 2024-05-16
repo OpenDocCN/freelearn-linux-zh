@@ -1,3 +1,4 @@
++   [将 Linux 迁移到微软 Azure](README.md)
 +   [前言](rhel-tbst-gd_00.md)
 +   [第一章：故障排除最佳实践](rhel-tbst-gd_01.md)
 +   [第二章：故障排除命令和有用信息的来源](rhel-tbst-gd_02.md)

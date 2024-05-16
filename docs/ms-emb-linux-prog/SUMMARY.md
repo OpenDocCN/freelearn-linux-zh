@@ -1,3 +1,4 @@
++   [精通 Linux 嵌入式编程](README.md)
 +   [前言](ms-emb-linux-prog_00.md)
 +   [第一章：起步](ms-emb-linux-prog_01.md)
 +   [第二章：了解工具链](ms-emb-linux-prog_02.md)
