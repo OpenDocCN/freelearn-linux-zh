@@ -784,7 +784,7 @@ Your random password is: REzCOa11pA2846fvxsa
 
 此外，如果我们想要多次使用相同的随机值，我们无论如何都需要一个变量。因此，在这种情况下，脚本中的额外冗长帮助我们并且是可取的。
 
-`$(..)`的前身是使用反引号，即``` character (found next to the `1` on English-International keyboards). `$(cd dirname $0)` was previously written as ``cd dirname $0``. While this mostly does the same as the newer (and better) `$(..)` syntax, there are two things that were often an issue with backticks: word splitting and newlines. These are both issues that are caused by whitespace. It is much easier to use the new syntaxes and not have to worry about things like this!
+`$(..)`的前身是使用反引号，即`` ` ``字符（在英语国际键盘上的“1”旁边）。`$(cd dirname $0)`以前写为`` `cd dirname $0` ``。虽然这与新的（更好的）`$(..)`语法做的事情相同，有两件事经常与反斜线有关：单词拆分和换行。这些都是由空白引起的问题。使用新的语法要容易得多，而且不必担心这样的事情！
 
 # Process substitution
 
